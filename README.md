@@ -61,9 +61,23 @@ sonuç verir.
 metinler veren modele geçersin. Denemelerde en iyi sonucu `gemma-4-31b` verdi (≈12–20 sn).
 `mimo-v2.6-pro` ve `deepseek-v4.1-flash` 80 saniyede yanıt vermediği için önerilmez.
 
+### Otomatik yedek: Google Gemini (ücretsiz)
+`.env` içinde `GEMINI_API_KEY` varsa, Evren hata verdiğinde (kredi bitti, kota doldu,
+yanıt yok...) uygulama **kendiliğinden** Gemini'ye geçer. Kullanıcı bir şey fark etmez.
+- Anahtar: https://aistudio.google.com/apikey (kart gerekmez)
+- Model: `gemini-3.5-flash-lite` (~3–4 sn). `gemini-3.8-flash` daha güçlü ama ücretsiz
+  katmanda sık sık "çok yoğun" hatası veriyor.
+- Gizlilik: Google ücretsiz katmanda gönderilen içeriği ürünlerini geliştirmek için
+  kullanabilir. Sadece fotoğraf gider; konum ve saha notları gönderilmez.
+- Günlük ücretsiz limitler Google tarafından belirlenir; AI Studio'dan görebilirsin.
+
+Terminalde şunu görürsün: `🍄 Tür tanıma: Evren · gemma-4-31b → yedek: Gemini · gemini-3.5-flash-lite`
+
+Sırayı değiştirmek istersen (ör. 1 Aralık'tan sonra önce Gemini): `RECOGNIZER_ORDER=gemini,evren`
+
 ### Ücretli yedek: Claude
-`EVREN_API_KEY` boş bırakılıp `ANTHROPIC_API_KEY` yazılırsa Claude kullanılır
-(tanıma başına ~3–4 sent). Kod hazır duruyor; şimdilik gerek yok.
+`ANTHROPIC_API_KEY` yazılırsa zincirin en sonuna eklenir (tanıma başına ~3–4 sent).
+Kod hazır duruyor; şimdilik gerek yok.
 
 ### Anahtar neden güvende?
 - `.env` dosyası **GitHub'a gönderilmez** (`.gitignore` içinde).
@@ -74,7 +88,7 @@ metinler veren modele geçersin. Denemelerde en iyi sonucu `gemma-4-31b` verdi (
 ### Maliyet
 Evren modelleri platformun bildirdiğine göre **1 Aralık 2026'ya kadar ücretsiz**. Sonrasında
 fiyatlandırma "kredi" (CR) üzerinden olacak; o tarih yaklaşınca Evren panelinden kontrol et.
-Ücretli olursa başka bir servise geçmek tek bir ayar değişikliği (`server/providers/`).
+Ücretli olursa Gemini yedeği zaten hazır; Evren hata verdiği anda otomatik devralır.
 
 ---
 

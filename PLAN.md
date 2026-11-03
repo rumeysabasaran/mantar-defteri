@@ -69,7 +69,10 @@ için yapıyı değiştirmek gerekmez.
 (platforma göre 1 Aralık 2026'ya kadar). OpenAI uyumlu biçim; görsel base64 olarak gider.
 Beş görsel model aynı fotoğrafla denendi: gemma-4-31b en iyi metni verdi (~12 sn),
 qwen3-vl-30b en hızlıydı ama yüzeyseldi, diğerleri çok yavaştı.
-Yedek olarak Claude Opus 5.5 bağlayıcısı duruyor (`server/providers/claude.js`, ücretli).
+**Otomatik yedekleme zinciri** (`server/identify.js`): Evren → Gemini → Claude.
+Bir servis hata verirse sıradakine geçilir. Gemini (`gemini-3.5-flash-lite`, ücretsiz katman,
+Google'ın Interactions API'si) 1 Aralık sonrası için hazır; gerçek fotoğraflarla denendi
+(~3 sn, doğru tür). Claude Opus 5.5 ücretli son yedek (`server/providers/claude.js`).
 Hangi servis kullanılırsa kullanılsın yanıt aynı JSON kalıbında istenir (`server/prompt.js`,
 yenebilirlik alanı yok), sonra sunucuda ve telefonda iki kez süzülür.
 Yayın sunucusu olarak Cloudflare Pages seçildi: ücretsiz, ve tanıma 10 saniyeden uzun

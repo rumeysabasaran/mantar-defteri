@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import { handleIdentify, pickProvider } from './server/identify.js';
+import { handleIdentify, pickProviders } from './server/identify.js';
 import { mockIdentify } from './server/mockIdentify.js';
 
 /**
@@ -23,7 +23,8 @@ function identifyApi(env) {
       /* geçersiz istek: handleIdentify uygun hatayı döndürür */
     }
 
-    const { status, body: out } = pickProvider(env) ? await handleIdentify(body, env) : await mockIdentify(body);
+    const hasKey = pickProviders(env).length > 0;
+    const { status, body: out } = hasKey ? await handleIdentify(body, env) : await mockIdentify(body);
 
     res.statusCode = status;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -34,7 +35,10 @@ function identifyApi(env) {
     name: 'mantar-defteri-identify-api',
     configureServer(server) {
       server.middlewares.use('/api/identify', middleware);
-      const mode = pickProvider(env)?.label ?? 'DENEME modu (.env içinde anahtar yok)';
+      const providers = pickProviders(env);
+      const mode = providers.length
+        ? providers.map((p) => p.label).join('  →  yedek: ')
+        : 'DENEME modu (.env içinde anahtar yok)';
       server.httpServer?.once('listening', () => console.log(`\n  🍄 Tür tanıma: ${mode}\n`));
     },
     configurePreviewServer(server) {
