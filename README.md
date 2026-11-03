@@ -41,32 +41,40 @@ tarayıcısına yaz. (Windows güvenlik duvarı sorarsa "İzin ver" de.)
 
 ## Tür tanıma ve API anahtarı
 
-Tanıma için **Claude** (Anthropic) kullanılıyor. Anahtar yoksa uygulama **deneme modunda**
-çalışır: her fotoğrafa aynı üç türden sahte bir sonuç verir. Bütün akışı böyle de deneyebilirsin.
+Tanıma için **Evren LLM API** (`gemma-4-31b` modeli) kullanılıyor; şu an ücretsiz.
+Anahtar yoksa uygulama **deneme modunda** çalışır: her fotoğrafa aynı üç türden sahte bir
+sonuç verir.
 
-### Gerçek tanımayı açmak
-1. https://console.anthropic.com adresinde hesap aç, **Billing** bölümünden biraz kredi yükle
-   (5 $ ile başlamak yeter).
-2. **API Keys → Create Key** ile bir anahtar oluştur ve kopyala (`sk-ant-...` diye başlar).
-3. Proje klasöründeki `.env.example` dosyasının bir kopyasını oluştur, adını `.env` yap.
-4. `.env` dosyasını aç ve anahtarı yapıştır:
+### Anahtarı ayarlamak
+1. Evren panelindeki `/api-keys` sayfasından bir anahtar oluştur (`evren_llm_...` diye başlar)
+   ve kullanım şartlarını onayla.
+2. Proje klasöründeki `.env.example` dosyasının bir kopyasını oluştur, adını `.env` yap.
+3. `.env` dosyasını aç ve anahtarı yapıştır:
    ```
-   ANTHROPIC_API_KEY=sk-ant-buraya-anahtarın
+   EVREN_API_KEY=evren_llm_buraya-anahtarın
    ```
-5. Terminalde `npm run dev` komutunu durdurup (`Ctrl + C`) yeniden başlat.
-   Terminalde `🍄 Tür tanıma: Claude (gerçek tanıma)` yazısını görmelisin.
+4. Terminalde `npm run dev` komutunu durdurup (`Ctrl + C`) yeniden başlat.
+   Terminalde `🍄 Tür tanıma: Evren · gemma-4-31b` yazısını görmelisin.
+
+### Model değiştirmek
+`.env` içine `EVREN_MODEL=qwen3-vl-30b` yazarsan daha hızlı (≈5 sn) ama daha yüzeysel
+metinler veren modele geçersin. Denemelerde en iyi sonucu `gemma-4-31b` verdi (≈12–20 sn).
+`mimo-v2.6-pro` ve `deepseek-v4.1-flash` 80 saniyede yanıt vermediği için önerilmez.
+
+### Ücretli yedek: Claude
+`EVREN_API_KEY` boş bırakılıp `ANTHROPIC_API_KEY` yazılırsa Claude kullanılır
+(tanıma başına ~3–4 sent). Kod hazır duruyor; şimdilik gerek yok.
 
 ### Anahtar neden güvende?
 - `.env` dosyası **GitHub'a gönderilmez** (`.gitignore` içinde).
-- Anahtar sadece sunucu kodunda (`server/identify.js`) okunur. Telefona giden uygulama
+- Anahtar sadece sunucu kodunda (`server/`) okunur. Telefona giden uygulama
   kodunda yer almaz; telefon fotoğrafı `/api/identify` adresine yollar, anahtarı sunucu ekler.
 - Yayına alırken (6. aşama) anahtar Cloudflare panelinde "Environment variables" bölümüne girilir.
 
 ### Maliyet
-Model: Claude Opus 5.5 (1 milyon token başına girdi 4 $, çıktı 20 $).
-Telefon fotoğrafı göndermeden önce küçültüyor; **bir tanıma yaklaşık 3–4 sent** tutar.
-Yani 100 mantar ≈ 3–4 $. Harcamanı console.anthropic.com → **Usage** sayfasından izleyebilir,
-**Limits** bölümünden aylık üst sınır koyabilirsin.
+Evren modelleri platformun bildirdiğine göre **1 Aralık 2026'ya kadar ücretsiz**. Sonrasında
+fiyatlandırma "kredi" (CR) üzerinden olacak; o tarih yaklaşınca Evren panelinden kontrol et.
+Ücretli olursa başka bir servise geçmek tek bir ayar değişikliği (`server/providers/`).
 
 ---
 

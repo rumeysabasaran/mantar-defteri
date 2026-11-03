@@ -65,11 +65,13 @@ için yapıyı değiştirmek gerekmez.
 
 ## 5. Tür tanıma servisi
 
-**Seçilen: Claude Opus 5.5** (`server/identify.js`). Fiyat: 1M token başına girdi 4 $,
-çıktı 20 $ → küçültülmüş bir fotoğrafla tanıma başına ~3–4 sent. Yanıt sabit bir JSON
-kalıbında istenir (yenebilirlik alanı yok), sonra sunucuda ve telefonda iki kez süzülür.
-Güvenlik sınıflandırıcısı bir isteği yanlışlıkla reddederse Anthropic'in "fallback"
-özelliği isteği otomatik olarak başka bir modelle yeniden dener.
+**Seçilen: Evren LLM API, `gemma-4-31b`** (`server/providers/evren.js`). Ücretsiz
+(platforma göre 1 Aralık 2026'ya kadar). OpenAI uyumlu biçim; görsel base64 olarak gider.
+Beş görsel model aynı fotoğrafla denendi: gemma-4-31b en iyi metni verdi (~12 sn),
+qwen3-vl-30b en hızlıydı ama yüzeyseldi, diğerleri çok yavaştı.
+Yedek olarak Claude Opus 5.5 bağlayıcısı duruyor (`server/providers/claude.js`, ücretli).
+Hangi servis kullanılırsa kullanılsın yanıt aynı JSON kalıbında istenir (`server/prompt.js`,
+yenebilirlik alanı yok), sonra sunucuda ve telefonda iki kez süzülür.
 Yayın sunucusu olarak Cloudflare Pages seçildi: ücretsiz, ve tanıma 10 saniyeden uzun
 sürse bile isteği kesmiyor (Netlify/Vercel ücretsiz planlarında bu sınır var).
 

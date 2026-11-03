@@ -1,11 +1,11 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import { handleIdentify } from './server/identify.js';
+import { handleIdentify, pickProvider } from './server/identify.js';
 import { mockIdentify } from './server/mockIdentify.js';
 
 /**
  * Bilgisayarda çalışırken /api/identify adresini sağlayan küçük eklenti.
- * .env dosyasındaki ANTHROPIC_API_KEY sadece burada (sunucu tarafında) okunur.
+ * .env dosyasındaki API anahtarları sadece burada (sunucu tarafında) okunur.
  * Anahtar yoksa deneme tanıyıcısı devreye girer.
  */
 function identifyApi(env) {
@@ -23,8 +23,7 @@ function identifyApi(env) {
       /* geçersiz istek: handleIdentify uygun hatayı döndürür */
     }
 
-    const key = env.ANTHROPIC_API_KEY;
-    const { status, body: out } = key ? await handleIdentify(body, key) : await mockIdentify(body);
+    const { status, body: out } = pickProvider(env) ? await handleIdentify(body, env) : await mockIdentify(body);
 
     res.statusCode = status;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -35,7 +34,7 @@ function identifyApi(env) {
     name: 'mantar-defteri-identify-api',
     configureServer(server) {
       server.middlewares.use('/api/identify', middleware);
-      const mode = env.ANTHROPIC_API_KEY ? 'Claude (gerçek tanıma)' : 'DENEME modu (.env içinde anahtar yok)';
+      const mode = pickProvider(env)?.label ?? 'DENEME modu (.env içinde anahtar yok)';
       server.httpServer?.once('listening', () => console.log(`\n  🍄 Tür tanıma: ${mode}\n`));
     },
     configurePreviewServer(server) {
