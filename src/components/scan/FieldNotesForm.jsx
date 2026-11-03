@@ -1,19 +1,25 @@
 /*
   SAHA NOTU FORMU — Kitabı "senin" yapan kısım. Hepsi isteğe bağlı.
   Tarih, yer, hava, kimlerle olduğun ve serbest not.
+
+  initial: düzenleme için mevcut buluş ({ foundAt, notes }). Yoksa boş form açılır.
 */
 import { useState } from 'react';
 import Icon from '../ui/Icon.jsx';
-import { WEATHER, todayInputValue, inputValueToTime } from '../../data/fieldNotes.js';
+import { WEATHER, todayInputValue, timeToInputValue, inputValueToTime } from '../../data/fieldNotes.js';
 
-export default function FieldNotesForm({ onSubmit, onBack, submitLabel = 'Deftere kaydet', busy = false }) {
-  const [date, setDate] = useState(todayInputValue());
-  const [placeName, setPlaceName] = useState('');
-  const [coords, setCoords] = useState(null); // { lat, lng, accuracy }
+export default function FieldNotesForm({ initial, onSubmit, onBack, submitLabel = 'Deftere kaydet', busy = false }) {
+  const n = initial?.notes ?? {};
+  const initialDate = initial?.foundAt ? timeToInputValue(initial.foundAt) : todayInputValue();
+  const initialCoords = n.location?.lat != null ? { lat: n.location.lat, lng: n.location.lng, accuracy: n.location.accuracy } : null;
+
+  const [date, setDate] = useState(initialDate);
+  const [placeName, setPlaceName] = useState(n.location?.placeName ?? '');
+  const [coords, setCoords] = useState(initialCoords); // { lat, lng, accuracy }
   const [geoState, setGeoState] = useState('idle'); // idle | loading | error
-  const [weather, setWeather] = useState('');
-  const [companions, setCompanions] = useState('');
-  const [note, setNote] = useState('');
+  const [weather, setWeather] = useState(n.weather ?? '');
+  const [companions, setCompanions] = useState(n.companions ?? '');
+  const [note, setNote] = useState(n.note ?? '');
 
   function addLocation() {
     if (!('geolocation' in navigator)) {
@@ -38,7 +44,8 @@ export default function FieldNotesForm({ onSubmit, onBack, submitLabel = 'Defter
   function handleSubmit(event) {
     event.preventDefault();
     onSubmit({
-      foundAt: inputValueToTime(date),
+      // Tarih değişmediyse saati de koru
+      foundAt: initial?.foundAt && date === initialDate ? initial.foundAt : inputValueToTime(date),
       notes: {
         weather,
         companions: companions.trim(),
@@ -50,8 +57,12 @@ export default function FieldNotesForm({ onSubmit, onBack, submitLabel = 'Defter
 
   return (
     <form className="paper field-notes" onSubmit={handleSubmit}>
-      <h3>Saha notu</h3>
-      <p className="muted field-notes__hint">Hepsi isteğe bağlı. Sonra kitaptan da düzenleyebilirsin.</p>
+      {!initial && (
+        <>
+          <h3>Saha notu</h3>
+          <p className="muted field-notes__hint">Hepsi isteğe bağlı. Sonra kitaptan da düzenleyebilirsin.</p>
+        </>
+      )}
 
       <label className="field">
         <span className="field__label">Tarih</span>

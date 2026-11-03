@@ -87,6 +87,21 @@
   opacity: 0.7;
 }
 
+/* Kitabın içindeki kapak: sayfayı tamamen kaplar, kenar yığınını kitap kendisi çizer */
+.book-cover--fill {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  padding-right: 0;
+  filter: none;
+}
+.book-cover--fill .book-cover__pages {
+  display: none;
+}
+.book-cover--fill .book-cover__front {
+  border-radius: 3px 12px 12px 3px;
+}
+
 /* Küçük kapak (ana sayfa): sadece amblem ve başlık, süsler sadeleşir */
 .book-cover--small .book-cover__title { font-size: 1.05rem; }
 .book-cover--small .book-cover__subtitle,

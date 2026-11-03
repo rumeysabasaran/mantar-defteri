@@ -10,8 +10,10 @@ import { MushroomSketch } from '../ui/Ornaments.jsx';
 import { RARITY } from '../../data/gamification.js';
 import { displayName } from '../../services/safety.js';
 
-export default function Celebration({ outcome, onAgain, againLabel = 'Yeni tarama' }) {
+export default function Celebration({ outcome, onAgain, againLabel = 'Yeni tarama', againIcon = 'camera', hideBookLink = false }) {
   const { type, species, pointsEarned } = outcome;
+  // "Kitaba git" doğrudan ilgili sayfayı açar
+  const bookLink = type === 'draft' ? '/kitap/taslaklar' : `/kitap/${species.id}`;
 
   return (
     <section className={`paper celebration celebration--${type}`} aria-live="polite">
@@ -57,11 +59,13 @@ export default function Celebration({ outcome, onAgain, againLabel = 'Yeni taram
 
       <div className="celebration__actions">
         <button type="button" className="btn btn-primary btn-block" onClick={onAgain}>
-          <Icon name="camera" /> {againLabel}
+          <Icon name={againIcon} /> {againLabel}
         </button>
-        <Link to="/kitap" className="btn btn-ghost btn-block">
-          <Icon name="book" /> Kitaba git
-        </Link>
+        {!hideBookLink && (
+          <Link to={bookLink} className="btn btn-ghost btn-block">
+            <Icon name="book" /> {type === 'draft' ? 'Taslaklara git' : 'Sayfasını aç'}
+          </Link>
+        )}
       </div>
     </section>
   );

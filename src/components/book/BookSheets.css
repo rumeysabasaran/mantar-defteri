@@ -1,0 +1,20 @@
+.photo-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.photo-view__img {
+  max-width: 100%;
+  max-height: 74dvh;
+  object-fit: contain;
+  border: 8px solid #fffdf6;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.photo-view__btn {
+  background: var(--c-cream);
+}
+.danger-link {
+  color: var(--c-earth);
+  align-self: center;
+}

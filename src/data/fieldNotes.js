@@ -15,11 +15,16 @@ export function weatherLabel(key) {
   return WEATHER.find((w) => w.key === key)?.label ?? '';
 }
 
-/** Bugünün tarihi "YYYY-AA-GG" biçiminde (tarih kutusu için) */
-export function todayInputValue() {
-  const d = new Date();
+/** Bir zamanı tarih kutusunun istediği "YYYY-AA-GG" biçimine çevirir */
+export function timeToInputValue(time) {
+  const d = new Date(time);
   const pad = (n) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** Bugünün tarihi "YYYY-AA-GG" biçiminde (tarih kutusu için) */
+export function todayInputValue() {
+  return timeToInputValue(Date.now());
 }
 
 /** Tarih kutusundaki değeri zamana çevirir. Bugünse şimdiki saati kullanır. */

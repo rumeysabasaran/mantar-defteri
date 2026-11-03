@@ -111,7 +111,7 @@ Telefon fotoğrafı bizim fonksiyonumuza yollar, fonksiyon anahtarı ekleyip ser
 
 1. ✅ Proje yapısı, tema ve ana ekranlar
 2. ✅ Fotoğraf çekme/yükleme ve tür tanıma entegrasyonu
-3. ⬜ Koleksiyon kitabı ve sayfa çevirme
+3. ✅ Koleksiyon kitabı ve sayfa çevirme
 4. ⬜ Puan, rozet, seviye sistemi
 5. ⬜ Gezi kayıtları ve profil ekranı
 6. ⬜ PWA, çevrimdışı çalışma ve son rötuşlar

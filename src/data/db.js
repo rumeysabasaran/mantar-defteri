@@ -30,6 +30,12 @@ db.version(1).stores({
   badges: 'id, earnedAt',
 });
 
+// Sürüm 2: puanları türe göre bulabilmek için speciesId dizini eklendi.
+// (Dexie eski verileri kendiliğinden taşır; bir şey kaybolmaz.)
+db.version(2).stores({
+  points: 'id, createdAt, tripId, sightingId, speciesId',
+});
+
 /**
  * Yeni benzersiz kimlik üretir.
  * Bazı tarayıcılar (ör. telefondan http ile açınca) crypto.randomUUID sunmaz;

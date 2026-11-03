@@ -1,0 +1,85 @@
+/* ---------- Kitap çerçevesi ---------- */
+.book {
+  --edge: 6px;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin-right: var(--edge); /* sağdaki sayfa yığınına yer */
+  perspective: 2000px;
+  perspective-origin: 0% 50%;
+  touch-action: pan-y; /* dikey kaydırma tarayıcının, yatay hareket bizim */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Sağ kenarda görünen kalan sayfa yığını: kitap ilerledikçe incelir */
+.book__stack {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: calc(-1 * var(--edge));
+  width: calc(var(--edge) + 10px);
+  border-radius: 0 8px 8px 0;
+  background: repeating-linear-gradient(to right, #fbf7ec 0 2px, var(--c-paper-edge) 2px 3px);
+  box-shadow: 0 8px 18px rgba(70, 50, 20, 0.15);
+  transition: width 400ms var(--ease), right 400ms var(--ease);
+}
+
+/* ---------- Yaprak ---------- */
+.book__leaf {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.book__leaf.is-flat {
+  transform-style: flat;
+  will-change: auto;
+}
+.book__leaf.is-flat .book__face--back {
+  display: none;
+}
+.book__leaf.is-animating {
+  transition: transform 520ms cubic-bezier(0.3, 0.7, 0.25, 1);
+}
+
+.book__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 3px 12px 12px 3px;
+  overflow: hidden;
+  background-color: var(--c-paper);
+  background-image:
+    linear-gradient(to right, rgba(70, 50, 20, 0.14), rgba(70, 50, 20, 0) 4%), /* cilt gölgesi */
+    var(--paper-noise);
+  box-shadow: 0 1px 2px rgba(70, 50, 20, 0.08), 0 10px 24px rgba(70, 50, 20, 0.14);
+}
+
+/* Kâğıdın arka yüzü: aynı kâğıt, ışık tersten vurur */
+.book__face--back {
+  transform: rotateY(180deg);
+  background-image:
+    linear-gradient(to left, rgba(70, 50, 20, 0.16), rgba(70, 50, 20, 0) 30%),
+    var(--paper-noise);
+}
+/* Kapağın arka yüzü: kitap açılınca görünen süslü iç kapak kâğıdı */
+.book__face--back.is-endpaper {
+  background-color: #e9dfc6;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(46, 74, 51, 0.08) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 60%, rgba(46, 74, 51, 0.08) 0 2px, transparent 3px),
+    var(--paper-noise);
+  background-size: 22px 22px, 26px 26px, auto;
+}
+
+/* Çevrilirken sayfa kararır, alttaki sayfa aydınlanır */
+.book__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(40, 30, 10, 0.28), rgba(40, 30, 10, 0.08));
+  opacity: calc(var(--shade, 0) * 0.9);
+}

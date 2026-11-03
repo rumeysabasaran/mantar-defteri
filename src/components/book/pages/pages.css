@@ -1,0 +1,442 @@
+/* ---------- Ortak sayfa ---------- */
+.page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.page__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 26px 22px 12px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* sol kenarda ince kırmızımsı kenar boşluğu çizgisi: eski defter hissi */
+  background-image: linear-gradient(to right, transparent 18px, rgba(123, 86, 52, 0.18) 18px, rgba(123, 86, 52, 0.18) 19px, transparent 19px);
+  scrollbar-width: thin;
+}
+.page__number {
+  flex: none;
+  padding: 6px 0 10px;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--c-ink-faint);
+  font-size: 0.95rem;
+}
+.page__corner {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: var(--c-moss);
+  opacity: 0.45;
+  transform: rotate(90deg) !important;
+  pointer-events: none;
+}
+.page__title {
+  font-size: 1.8rem;
+  text-align: center;
+}
+.page__lead {
+  text-align: center;
+  font-size: 0.9rem;
+}
+.page__divider {
+  color: var(--c-moss);
+  opacity: 0.6;
+  flex: none;
+}
+
+/* ---------- Kapak ---------- */
+.page--cover {
+  align-items: stretch;
+  justify-content: center;
+  background: var(--c-forest);
+}
+.page-cover__btn {
+  flex: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.page-cover__hint {
+  position: absolute;
+  bottom: 16%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--c-mustard-soft);
+  opacity: 0.75;
+  pointer-events: none;
+  animation: hint-pulse 2.6s var(--ease) infinite;
+}
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+}
+
+/* ---------- İçindekiler ---------- */
+.toc__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  color: var(--c-ink-soft);
+  padding: 20px 0;
+}
+.toc__empty svg { color: var(--c-moss); }
+.toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.toc__row {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--c-ink);
+}
+.toc__no {
+  font-family: var(--font-serif);
+  color: var(--c-earth);
+  min-width: 22px;
+}
+.toc__name {
+  font-family: var(--font-serif);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--c-forest);
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.toc__name em {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--c-ink-soft);
+}
+.toc__dots {
+  flex: 1;
+  border-bottom: 1.5px dotted var(--c-paper-edge);
+  transform: translateY(-4px);
+  min-width: 16px;
+}
+.toc__page {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--c-ink-soft);
+}
+.toc__list--extra .toc__name {
+  font-size: 1rem;
+  font-weight: 500;
+  font-style: italic;
+}
+.toc__toggle {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 0.84rem;
+  color: var(--c-ink-soft);
+  cursor: pointer;
+}
+.toc__toggle input {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--c-forest);
+  flex: none;
+}
+
+/* ---------- Tür sayfası ---------- */
+.species__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 34px;
+}
+.species__name {
+  font-size: 2rem;
+}
+.species__latin {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--c-ink-soft);
+}
+.species__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.chip--quiet {
+  background: transparent;
+  border: 1px solid var(--c-paper-edge);
+  color: var(--c-ink-soft);
+  font-weight: 700;
+}
+.species__polaroid {
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+.species__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.species__h {
+  font-size: 1.15rem;
+  color: var(--c-earth);
+  font-style: italic;
+  font-weight: 600;
+}
+.species__desc {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.species__row {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  font-size: 0.92rem;
+}
+.species__row dt {
+  font-weight: 800;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-moss);
+  padding-top: 3px;
+}
+.species__row dd {
+  margin: 0;
+  color: var(--c-ink);
+}
+.species__fact {
+  position: relative;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(240, 223, 180, 0.55);
+  border: 1px dashed var(--c-mustard);
+  font-size: 0.93rem;
+}
+.species__fact-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--c-earth);
+  margin-bottom: 4px;
+}
+.species__fact-title svg { color: var(--c-mustard); }
+.species__ai-note {
+  font-size: 0.74rem;
+  font-style: italic;
+  color: var(--c-ink-faint);
+  margin-top: -6px;
+}
+
+.notes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.note {
+  padding-left: 12px;
+  border-left: 2px solid var(--c-paper-edge);
+}
+.note__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.note__date {
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--c-forest);
+}
+.note__edit {
+  border: 0;
+  background: none;
+  padding: 6px 0 6px 10px;
+  color: var(--c-earth);
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.note__facts {
+  font-size: 0.84rem;
+  color: var(--c-ink-soft);
+}
+.note__text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.08rem;
+  color: var(--c-ink);
+  margin-top: 2px;
+}
+.note__empty {
+  font-size: 0.82rem;
+  color: var(--c-ink-faint);
+  font-style: italic;
+}
+
+.species__gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+.species__thumb {
+  aspect-ratio: 1;
+  padding: 4px;
+  border: 0;
+  background: #fffdf6;
+  box-shadow: var(--shadow-paper);
+  cursor: zoom-in;
+}
+.species__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.species__thumb.is-cover {
+  outline: 2px solid var(--c-mustard);
+}
+
+/* ---------- "?" sayfası ---------- */
+.page--mystery .page__scroll {
+  justify-content: center;
+}
+.mystery__section {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--c-ink-faint);
+}
+.mystery__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  opacity: 0.72;
+}
+.mystery__mark {
+  font-family: var(--font-serif);
+  font-size: 8rem;
+  line-height: 1;
+  color: var(--c-paper-edge);
+  font-weight: 500;
+}
+.mystery__sketch {
+  color: var(--c-ink-faint);
+  opacity: 0.6;
+  margin-top: -30px;
+}
+.mystery__hint {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--c-ink-soft);
+  max-width: 28ch;
+}
+
+/* ---------- Taslaklar ---------- */
+.drafts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.draft {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.draft .polaroid {
+  flex: none;
+  padding: 6px 6px 8px;
+}
+.draft .polaroid::before {
+  width: 40px;
+  height: 14px;
+  top: -7px;
+}
+.draft__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.draft__date {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--c-forest);
+}
+.draft__guess {
+  font-size: 0.86rem;
+  color: var(--c-ink-soft);
+}
+.draft__cta {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--c-earth);
+  margin-top: 4px;
+}
+
+/* ---------- Son sayfa ---------- */
+.page--end .page__scroll {
+  justify-content: center;
+}
+.end__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+.end__fern {
+  color: var(--c-moss);
+  opacity: 0.7;
+}

@@ -5,13 +5,13 @@
 import { MushroomSketch, CornerFlourish } from '../ui/Ornaments.jsx';
 import './BookCover.css';
 
-export default function BookCover({ speciesCount = 0, small = false }) {
+export default function BookCover({ speciesCount = 0, small = false, fill = false }) {
   // 0 türde ince, her türle biraz kalınlaşır (en fazla 22px)
   const thickness = Math.min(22, 4 + speciesCount * 0.6);
 
   return (
     <div
-      className={`book-cover${small ? ' book-cover--small' : ''}`}
+      className={`book-cover${small ? ' book-cover--small' : ''}${fill ? ' book-cover--fill' : ''}`}
       style={{ '--pages': `${thickness}px` }}
     >
       <div className="book-cover__pages" aria-hidden="true" />

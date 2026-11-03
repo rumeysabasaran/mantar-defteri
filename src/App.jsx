@@ -18,7 +18,8 @@ export default function App() {
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<HomeScreen />} />
-          <Route path="kitap" element={<BookScreen />} />
+          {/* :pageKey isteğe bağlı → /kitap ve /kitap/<tür> aynı ekranı açar */}
+          <Route path="kitap/:pageKey?" element={<BookScreen />} />
           <Route path="tara" element={<ScanScreen />} />
           <Route path="geziler" element={<TripsScreen />} />
           <Route path="profil" element={<ProfileScreen />} />

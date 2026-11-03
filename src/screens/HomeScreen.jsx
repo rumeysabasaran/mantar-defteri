@@ -22,12 +22,14 @@ function RecentItem({ sighting }) {
     .join(' · ');
 
   return (
-    <li className="paper home__recent-item">
-      <img src={thumb ?? undefined} alt="" className="home__recent-thumb" />
-      <div>
-        <p className="home__recent-name">{isDraft ? 'Taslak buluş' : displayName(sighting.species)}</p>
-        <p className="home__recent-meta">{meta}</p>
-      </div>
+    <li>
+      <Link to={isDraft ? '/kitap/taslaklar' : `/kitap/${sighting.speciesId}`} className="paper home__recent-item">
+        <img src={thumb ?? undefined} alt="" className="home__recent-thumb" />
+        <div>
+          <p className="home__recent-name">{isDraft ? 'Taslak buluş' : displayName(sighting.species)}</p>
+          <p className="home__recent-meta">{meta}</p>
+        </div>
+      </Link>
     </li>
   );
 }

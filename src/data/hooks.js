@@ -38,6 +38,25 @@ export function useRecentSightings(limit = 5) {
   );
 }
 
+/**
+ * Kitabın bütün verisi: türler (bulunma sırasına göre), türlere göre buluşlar, taslaklar.
+ * Yüklenirken undefined döner.
+ */
+export function useBookData() {
+  return useLiveQuery(async () => {
+    const [species, sightings] = await Promise.all([db.species.orderBy('firstFoundAt').toArray(), db.sightings.toArray()]);
+    const bySpecies = {};
+    const drafts = [];
+    for (const s of sightings) {
+      if (!s.speciesId) drafts.push(s);
+      else (bySpecies[s.speciesId] ??= []).push(s);
+    }
+    Object.values(bySpecies).forEach((list) => list.sort((a, b) => a.foundAt - b.foundAt));
+    drafts.sort((a, b) => b.foundAt - a.foundAt);
+    return { species, bySpecies, drafts };
+  }, []);
+}
+
 /** Bekleyen fotoğraflar (en eski önce) */
 export function usePendingList() {
   return useLiveQuery(() => db.pending.orderBy('createdAt').toArray(), []) ?? [];
