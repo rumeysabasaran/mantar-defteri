@@ -136,6 +136,14 @@ p {
 
 .btn-block { width: 100%; }
 
+/* Yazı gibi görünen, çerçevesiz buton (Vazgeç, Geri gibi ikincil işler) */
+.btn-text {
+  background: transparent;
+  color: var(--c-ink-soft);
+  font-weight: 700;
+  min-height: 42px;
+}
+
 /* ---------- Küçük parçalar ---------- */
 
 .chip {

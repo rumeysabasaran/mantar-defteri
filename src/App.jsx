@@ -10,6 +10,7 @@ import BookScreen from './screens/BookScreen.jsx';
 import ScanScreen from './screens/ScanScreen.jsx';
 import TripsScreen from './screens/TripsScreen.jsx';
 import ProfileScreen from './screens/ProfileScreen.jsx';
+import PendingScreen from './screens/PendingScreen.jsx';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="tara" element={<ScanScreen />} />
           <Route path="geziler" element={<TripsScreen />} />
           <Route path="profil" element={<ProfileScreen />} />
+          <Route path="bekleyenler" element={<PendingScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -39,6 +39,37 @@ tarayıcısına yaz. (Windows güvenlik duvarı sorarsa "İzin ver" de.)
 
 ---
 
+## Tür tanıma ve API anahtarı
+
+Tanıma için **Claude** (Anthropic) kullanılıyor. Anahtar yoksa uygulama **deneme modunda**
+çalışır: her fotoğrafa aynı üç türden sahte bir sonuç verir. Bütün akışı böyle de deneyebilirsin.
+
+### Gerçek tanımayı açmak
+1. https://console.anthropic.com adresinde hesap aç, **Billing** bölümünden biraz kredi yükle
+   (5 $ ile başlamak yeter).
+2. **API Keys → Create Key** ile bir anahtar oluştur ve kopyala (`sk-ant-...` diye başlar).
+3. Proje klasöründeki `.env.example` dosyasının bir kopyasını oluştur, adını `.env` yap.
+4. `.env` dosyasını aç ve anahtarı yapıştır:
+   ```
+   ANTHROPIC_API_KEY=sk-ant-buraya-anahtarın
+   ```
+5. Terminalde `npm run dev` komutunu durdurup (`Ctrl + C`) yeniden başlat.
+   Terminalde `🍄 Tür tanıma: Claude (gerçek tanıma)` yazısını görmelisin.
+
+### Anahtar neden güvende?
+- `.env` dosyası **GitHub'a gönderilmez** (`.gitignore` içinde).
+- Anahtar sadece sunucu kodunda (`server/identify.js`) okunur. Telefona giden uygulama
+  kodunda yer almaz; telefon fotoğrafı `/api/identify` adresine yollar, anahtarı sunucu ekler.
+- Yayına alırken (6. aşama) anahtar Cloudflare panelinde "Environment variables" bölümüne girilir.
+
+### Maliyet
+Model: Claude Opus 5.5 (1 milyon token başına girdi 4 $, çıktı 20 $).
+Telefon fotoğrafı göndermeden önce küçültüyor; **bir tanıma yaklaşık 3–4 sent** tutar.
+Yani 100 mantar ≈ 3–4 $. Harcamanı console.anthropic.com → **Usage** sayfasından izleyebilir,
+**Limits** bölümünden aylık üst sınır koyabilirsin.
+
+---
+
 ## Klasörler kısaca
 
 | Klasör | Ne var? |
@@ -47,4 +78,7 @@ tarayıcısına yaz. (Windows güvenlik duvarı sorarsa "İzin ver" de.)
 | `src/components/` | Tekrar kullanılan parçalar (menü, kapak, süslemeler, ikonlar) |
 | `src/styles/theme.css` | **Tüm renkler ve yazı tipleri** — görünümü buradan değiştirebilirsin |
 | `src/data/` | Cihazdaki veritabanı ve oyun kuralları (puan, seviye, rozet) |
+| `src/services/` | Fotoğraf küçültme, tür tanıma, **güvenlik süzgeci**, bekleyenler kuyruğu |
+| `server/` | Sadece sunucuda çalışan tanıma kodu (API anahtarı burada kullanılır) |
+| `functions/` | Yayındaki sunucu (Cloudflare Pages) için giriş dosyası |
 | `public/` | Simge gibi sabit dosyalar |

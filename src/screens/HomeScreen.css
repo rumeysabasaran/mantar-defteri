@@ -57,3 +57,38 @@
   display: grid;
   gap: 10px;
 }
+.home__recent-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px 10px 10px;
+}
+.home__recent-thumb {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--c-paper-edge);
+}
+.home__recent-name {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--c-forest);
+  line-height: 1.2;
+}
+.home__recent-meta {
+  font-size: 0.8rem;
+  color: var(--c-ink-faint);
+}
+
+.home__pending {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  color: var(--c-earth);
+  font-weight: 700;
+  text-decoration: none;
+}

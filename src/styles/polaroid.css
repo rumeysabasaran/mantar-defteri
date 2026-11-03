@@ -3,14 +3,17 @@
   Üstte yarı saydam bir bant parçası, altta el yazısı tadında tarih.
 */
 .polaroid {
+  --tilt: -1.5deg;
   position: relative;
   margin: 0;
   width: min(100%, 300px);
   padding: 12px 12px 14px;
   background: #fffdf6;
   box-shadow: var(--shadow-paper);
+  transform: rotate(var(--tilt));
 }
-.polaroid img {
+.polaroid img,
+.polaroid__blank {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;

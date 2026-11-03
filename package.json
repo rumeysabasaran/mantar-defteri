@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0",
     "@fontsource/cormorant-garamond": "^5.1.0",
     "@fontsource/nunito": "^5.1.0",
     "dexie": "^4.0.10",

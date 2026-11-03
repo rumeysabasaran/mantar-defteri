@@ -7,9 +7,30 @@ import BookCover from '../components/book/BookCover.jsx';
 import Disclaimer from '../components/ui/Disclaimer.jsx';
 import Icon from '../components/ui/Icon.jsx';
 import { MushroomSketch, Divider } from '../components/ui/Ornaments.jsx';
-import { useStats, useRecentSightings } from '../data/hooks.js';
+import { useStats, useRecentSightings, usePhotoUrl } from '../data/hooks.js';
 import { levelFor } from '../data/gamification.js';
+import { formatDate, weatherLabel } from '../data/fieldNotes.js';
+import { displayName } from '../services/safety.js';
 import './HomeScreen.css';
+
+/** Son buluşlar listesindeki tek satır: küçük fotoğraf, tür adı, tarih */
+function RecentItem({ sighting }) {
+  const thumb = usePhotoUrl(sighting.photoId, 'thumb');
+  const isDraft = sighting.status === 'draft';
+  const meta = [formatDate(sighting.foundAt, false), weatherLabel(sighting.notes?.weather), sighting.notes?.location?.placeName]
+    .filter(Boolean)
+    .join(' · ');
+
+  return (
+    <li className="paper home__recent-item">
+      <img src={thumb ?? undefined} alt="" className="home__recent-thumb" />
+      <div>
+        <p className="home__recent-name">{isDraft ? 'Taslak buluş' : displayName(sighting.species)}</p>
+        <p className="home__recent-meta">{meta}</p>
+      </div>
+    </li>
+  );
+}
 
 /** Günün saatine göre selamlama */
 function greeting() {
@@ -71,11 +92,17 @@ export default function HomeScreen() {
         ) : (
           <ul className="home__recent-list">
             {recent.map((s) => (
-              <li key={s.id} className="paper">{s.title ?? 'Buluş'}</li>
+              <RecentItem key={s.id} sighting={s} />
             ))}
           </ul>
         )}
       </section>
+
+      {stats.pendingCount > 0 && (
+        <Link to="/bekleyenler" className="paper home__pending">
+          <Icon name="clock" /> {stats.pendingCount} fotoğraf tanınmayı bekliyor →
+        </Link>
+      )}
 
       <Disclaimer compact />
     </div>

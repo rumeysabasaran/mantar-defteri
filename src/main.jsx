@@ -24,6 +24,10 @@ import './styles/global.css';
 import './styles/polaroid.css';
 
 import App from './App.jsx';
+import { startPendingWatcher } from './services/pendingQueue.js';
+
+// Bekleyen fotoğrafları kontrol et ve internet geri gelince tanı
+startPendingWatcher();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

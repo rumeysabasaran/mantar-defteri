@@ -5,27 +5,33 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  padding: 24px;
+  text-align: center;
   color: var(--c-moss);
   border-style: dashed;
   border-width: 1.5px;
 }
 
-.scan__polaroid {
-  align-self: center;
-  transform: rotate(-1.5deg);
-  animation: polaroid-in 420ms var(--ease) both;
-}
-@keyframes polaroid-in {
-  from { opacity: 0; transform: rotate(-6deg) translateY(12px) scale(0.96); }
-  to   { opacity: 1; transform: rotate(-1.5deg); }
-}
-
-.scan__soon {
-  font-size: 0.9rem;
-  color: var(--c-ink-soft);
-}
-
 .scan__actions {
   display: grid;
   gap: 10px;
+}
+.scan__actions--wide {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.scan__pending-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--c-ink);
+  text-decoration: none;
+}
+.scan__pending-link svg {
+  color: var(--c-earth);
+}
+.scan__pending-link span:nth-child(2) {
+  flex: 1;
 }

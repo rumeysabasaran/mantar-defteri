@@ -63,7 +63,17 @@ için yapıyı değiştirmek gerekmez.
 - **points** — Puan hareketleri (toplam puan bunlardan hesaplanır)
 - **badges** — Kazanılan rozetler
 
-## 5. Tür tanıma servisi (öneri — 2. aşamada netleşecek)
+## 5. Tür tanıma servisi
+
+**Seçilen: Claude Opus 5.5** (`server/identify.js`). Fiyat: 1M token başına girdi 4 $,
+çıktı 20 $ → küçültülmüş bir fotoğrafla tanıma başına ~3–4 sent. Yanıt sabit bir JSON
+kalıbında istenir (yenebilirlik alanı yok), sonra sunucuda ve telefonda iki kez süzülür.
+Güvenlik sınıflandırıcısı bir isteği yanlışlıkla reddederse Anthropic'in "fallback"
+özelliği isteği otomatik olarak başka bir modelle yeniden dener.
+Yayın sunucusu olarak Cloudflare Pages seçildi: ücretsiz, ve tanıma 10 saniyeden uzun
+sürse bile isteği kesmiyor (Netlify/Vercel ücretsiz planlarında bu sınır var).
+
+Başlangıçtaki karşılaştırma:
 
 Kodda bir "tanıyıcı adaptörü" olacak; servis değiştirmek tek dosyayı değiştirmek demek.
 
@@ -95,7 +105,7 @@ Telefon fotoğrafı bizim fonksiyonumuza yollar, fonksiyon anahtarı ekleyip ser
 ## 7. Aşamalar
 
 1. ✅ Proje yapısı, tema ve ana ekranlar
-2. ⬜ Fotoğraf çekme/yükleme ve tür tanıma entegrasyonu
+2. ✅ Fotoğraf çekme/yükleme ve tür tanıma entegrasyonu
 3. ⬜ Koleksiyon kitabı ve sayfa çevirme
 4. ⬜ Puan, rozet, seviye sistemi
 5. ⬜ Gezi kayıtları ve profil ekranı
