@@ -1,0 +1,215 @@
+/*
+  GENEL STİLLER — sıfırlama, yazı düzeni ve her ekranda kullanılan ortak sınıflar.
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--c-ink);
+  background-color: var(--c-cream);
+  background-image: var(--paper-noise);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Yazı ---------- */
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--c-forest);
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: 0.005em;
+}
+h1 { font-size: 2.1rem; }
+h2 { font-size: 1.55rem; }
+h3 { font-size: 1.25rem; }
+
+p {
+  margin: 0;
+}
+
+.muted {
+  color: var(--c-ink-soft);
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-earth);
+  font-weight: 700;
+}
+
+/* ---------- Ekran düzeni ---------- */
+
+.screen {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 20px) var(--gutter)
+    calc(var(--nav-h) + env(safe-area-inset-bottom) + 36px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: screen-in var(--dur) var(--ease) both;
+}
+
+@keyframes screen-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Kâğıt kart ---------- */
+
+.paper {
+  position: relative;
+  background-color: var(--c-paper);
+  background-image: var(--paper-noise);
+  border: 1px solid var(--c-paper-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-paper);
+  padding: 18px;
+}
+
+/* ---------- Butonlar ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;          /* parmakla rahat dokunma */
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-weight: 700;
+  font-size: 0.98rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 120ms var(--ease), background-color var(--dur) var(--ease);
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--c-forest);
+  color: var(--c-cream);
+}
+.btn-primary:active { background: var(--c-forest-deep); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--c-forest);
+  border-color: var(--c-forest);
+}
+
+.btn-block { width: 100%; }
+
+/* ---------- Küçük parçalar ---------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--c-mustard-soft);
+  color: var(--c-earth);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.stat {
+  text-align: center;
+  padding: 12px 6px;
+}
+.stat-value {
+  font-family: var(--font-serif);
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--c-forest);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--c-ink-soft);
+  margin-top: 4px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 26px 18px;
+  color: var(--c-ink-soft);
+}
+
+.progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--c-paper-edge);
+  overflow: hidden;
+}
+.progress > span {
+  display: block;
+  height: 100%;
+  background: var(--c-mustard);
+  border-radius: inherit;
+  transition: width 600ms var(--ease);
+}
+
+/* Erişilebilirlik: ekran okuyucuya özel metin */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Hareket azaltma tercih edenler için animasyonları kapat */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

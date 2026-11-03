@@ -1,0 +1,95 @@
+.book-cover {
+  --pages: 6px;
+  position: relative;
+  width: min(100%, 300px);
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  padding-right: var(--pages);
+  filter: drop-shadow(0 12px 18px rgba(30, 51, 34, 0.25));
+}
+.book-cover--small {
+  width: 150px;
+}
+
+/* Sayfa kenarları: kapağın arkasından sağa taşan krem çizgiler */
+.book-cover__pages {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: 0;
+  width: calc(var(--pages) + 12px);
+  border-radius: 0 6px 6px 0;
+  background: repeating-linear-gradient(
+    to right,
+    var(--c-paper) 0 2px,
+    var(--c-paper-edge) 2px 3px
+  );
+  transition: width 600ms var(--ease);
+}
+
+.book-cover__front {
+  position: relative;
+  height: 100%;
+  border-radius: 4px 12px 12px 4px;
+  background-color: var(--c-forest);
+  /* deri dokusu + sol tarafta cilt (sırt) gölgesi */
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.28) 0, rgba(0, 0, 0, 0.05) 9%, transparent 11%),
+    var(--paper-noise),
+    radial-gradient(120% 80% at 70% 20%, rgba(255, 255, 255, 0.07), transparent 60%);
+  padding: 7% 8% 7% 12%;
+}
+
+.book-cover__frame {
+  position: relative;
+  height: 100%;
+  border: 1.5px solid rgba(210, 160, 58, 0.7);
+  outline: 1px solid rgba(210, 160, 58, 0.35);
+  outline-offset: 4px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  color: var(--c-mustard);
+}
+
+.book-cover__corner {
+  position: absolute;
+  color: rgba(210, 160, 58, 0.75);
+}
+.book-cover__corner.tl { top: 4px; left: 4px; }
+.book-cover__corner.tr { top: 4px; right: 4px; }
+.book-cover__corner.br { bottom: 4px; right: 4px; }
+.book-cover__corner.bl { bottom: 4px; left: 4px; }
+
+.book-cover__title {
+  color: var(--c-mustard);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.book-cover__subtitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--c-mustard-soft);
+  font-size: 1rem;
+  opacity: 0.85;
+}
+.book-cover__count {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-mustard-soft);
+  opacity: 0.7;
+}
+
+/* Küçük kapak (ana sayfa): sadece amblem ve başlık, süsler sadeleşir */
+.book-cover--small .book-cover__title { font-size: 1.05rem; }
+.book-cover--small .book-cover__subtitle,
+.book-cover--small .book-cover__count,
+.book-cover--small .book-cover__corner { display: none; }
+.book-cover--small .book-cover__frame { gap: 4px; outline-offset: 2px; }
