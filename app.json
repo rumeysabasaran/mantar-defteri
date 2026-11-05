@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Mantar Defteri",
+    "slug": "mantar-defteri",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "scheme": "mantardefteri",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#f4eddc",
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Ormanda gördüğün mantarın fotoğrafını çekmek için kamerayı kullanır.",
+        "NSPhotoLibraryUsageDescription": "Galerindeki bir mantar fotoğrafını deftere eklemek için.",
+        "NSLocationWhenInUseUsageDescription": "Buluşun yerini saha notuna eklemek için, sadece sen istediğinde."
+      }
+    },
+    "android": {
+      "package": "com.mantardefteri.app",
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "server",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-image",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#f4eddc"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Galerindeki bir mantar fotoğrafını deftere eklemek için.",
+          "cameraPermission": "Ormanda gördüğün mantarın fotoğrafını çekmek için kamerayı kullanır."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Buluşun yerini saha notuna eklemek için, sadece sen istediğinde."
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

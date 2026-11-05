@@ -80,6 +80,10 @@ async function send(body, apiKey) {
       },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(TIMEOUT_MS),
+      // Expo geliştirme sunucusu kendi fetch'ini kullanır ve yanıt 30 sn içinde başlamazsa
+      // bağlantıyı keser. Model düşünürken veri göndermediği için bu süreyi uzatıyoruz.
+      // (Standart fetch bu ayarı tanımaz ve görmezden gelir.)
+      connectTimeout: TIMEOUT_MS + 5_000,
     });
   } catch (err) {
     if (err.name === 'TimeoutError') {

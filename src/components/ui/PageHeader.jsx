@@ -1,17 +1,24 @@
 /*
   EKRAN BAŞLIĞI — Üstte küçük bir etiket, büyük serif başlık ve köşede eğrelti süsü.
 */
-import { FernSprig } from './Ornaments.jsx';
-import './PageHeader.css';
+import { StyleSheet, Text, View } from 'react-native';
+import { FernSprig } from './Ornaments';
+import { Eyebrow, type } from './Typography';
+import { colors } from '../../theme';
 
 export default function PageHeader({ eyebrow, title, subtitle, children }) {
   return (
-    <header className="page-header">
-      <FernSprig className="page-header__fern" size={84} flip />
-      {eyebrow && <span className="eyebrow">{eyebrow}</span>}
-      <h1>{title}</h1>
-      {subtitle && <p className="muted">{subtitle}</p>}
+    <View style={styles.header} accessibilityRole="header">
+      <FernSprig size={84} flip color={colors.moss} style={styles.fern} />
+      {!!eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <Text style={type.h1}>{title}</Text>
+      {!!subtitle && <Text style={type.muted}>{subtitle}</Text>}
       {children}
-    </header>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  header: { gap: 4, paddingRight: 70, minHeight: 72 },
+  fern: { position: 'absolute', top: -8, right: -6, opacity: 0.55 },
+});

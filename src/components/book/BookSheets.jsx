@@ -5,40 +5,58 @@
   - DraftSheet:   taslağın türünü sonradan seçer (puan ve kutlama ile)
 */
 import { useState } from 'react';
-import Sheet from '../ui/Sheet.jsx';
-import Polaroid from '../ui/Polaroid.jsx';
-import Icon from '../ui/Icon.jsx';
-import FieldNotesForm from '../scan/FieldNotesForm.jsx';
-import CandidateList from '../scan/CandidateList.jsx';
-import Celebration from '../scan/Celebration.jsx';
-import { usePhotoUrl } from '../../data/hooks.js';
-import { deleteSighting, resolveDraft, setCoverPhoto, updateSighting } from '../../services/collection.js';
-import '../scan/scan.css';
-import './BookSheets.css';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import Sheet from '../ui/Sheet';
+import Polaroid from '../ui/Polaroid';
+import Button from '../ui/Button';
+import FieldNotesForm from '../scan/FieldNotesForm';
+import CandidateList from '../scan/CandidateList';
+import Celebration from '../scan/Celebration';
+import { confirmAsync } from '../ui/confirm';
+import { type } from '../ui/Typography';
+import { usePhotoUri } from '../../data/hooks';
+import { deleteSighting, resolveDraft, setCoverPhoto, updateSighting } from '../../services/collection';
+import { colors } from '../../theme';
+
+const { height: SCREEN_H } = Dimensions.get('window');
 
 // ---------------------------------------------------------------- FOTOĞRAF
 
 export function PhotoSheet({ photoId, species, onClose }) {
-  const url = usePhotoUrl(photoId, 'full');
+  const uri = usePhotoUri(photoId, 'full');
   const isCover = species?.coverPhotoId === photoId;
+  const [ratio, setRatio] = useState(1); // genişlik / yükseklik: çerçeve fotoğrafa göre şekillenir
 
   return (
-    <Sheet title="Fotoğraf" onClose={onClose} variant="is-photo">
-      <div className="photo-view">
-        {url && <img src={url} alt="" className="photo-view__img" />}
-        {species && !isCover && (
-          <button
-            type="button"
-            className="btn btn-ghost photo-view__btn"
-            onClick={async () => {
-              await setCoverPhoto(species.id, photoId);
-              onClose();
-            }}
-          >
-            <Icon name="book" /> Sayfanın fotoğrafı yap
-          </button>
-        )}
-      </div>
+    <Sheet title="Fotoğraf" onClose={onClose} variant="photo">
+      {({ close }) => (
+        <>
+          <View style={[styles.photoFrame, { aspectRatio: ratio, maxHeight: SCREEN_H * 0.7 }]}>
+            {!!uri && (
+              <Image
+                source={{ uri }}
+                style={styles.photo}
+                contentFit="contain"
+                transition={200}
+                onLoad={(e) => e.source?.width && setRatio(e.source.width / e.source.height)}
+              />
+            )}
+          </View>
+          {species && !isCover && (
+            <Button
+              variant="ghost"
+              icon="book"
+              title="Sayfanın fotoğrafı yap"
+              style={styles.photoBtn}
+              onPress={async () => {
+                await setCoverPhoto(species.id, photoId);
+                close();
+              }}
+            />
+          )}
+        </>
+      )}
     </Sheet>
   );
 }
@@ -48,26 +66,36 @@ export function PhotoSheet({ photoId, species, onClose }) {
 export function EditSheet({ sighting, onClose }) {
   const [busy, setBusy] = useState(false);
 
-  async function save({ foundAt, notes }) {
-    setBusy(true);
-    await updateSighting(sighting.id, { foundAt, notes });
-    onClose();
-  }
-
-  async function remove() {
-    const ok = window.confirm('Bu buluş, fotoğrafı ve puanıyla birlikte silinsin mi? Bu geri alınamaz.');
-    if (!ok) return;
-    setBusy(true);
-    await deleteSighting(sighting.id);
-    onClose();
-  }
-
   return (
     <Sheet title="Saha notunu düzenle" onClose={onClose}>
-      <FieldNotesForm initial={sighting} onSubmit={save} submitLabel="Kaydet" busy={busy} />
-      <button type="button" className="btn btn-text danger-link" onClick={remove} disabled={busy}>
-        Bu buluşu sil
-      </button>
+      {({ close }) => (
+        <>
+          <FieldNotesForm
+            bare
+            initial={sighting}
+            submitLabel="Kaydet"
+            busy={busy}
+            onSubmit={async ({ foundAt, notes }) => {
+              setBusy(true);
+              await updateSighting(sighting.id, { foundAt, notes });
+              close();
+            }}
+          />
+          <Button
+            variant="text"
+            color={colors.earth}
+            title="Bu buluşu sil"
+            disabled={busy}
+            onPress={async () => {
+              const ok = await confirmAsync('Buluş silinsin mi?', 'Bu buluş, fotoğrafı ve puanıyla birlikte silinecek. Bu geri alınamaz.');
+              if (!ok) return;
+              setBusy(true);
+              await deleteSighting(sighting.id);
+              close();
+            }}
+          />
+        </>
+      )}
     </Sheet>
   );
 }
@@ -75,7 +103,7 @@ export function EditSheet({ sighting, onClose }) {
 // ---------------------------------------------------------------- TASLAK
 
 export function DraftSheet({ sighting, onClose }) {
-  const url = usePhotoUrl(sighting.photoId, 'full');
+  const uri = usePhotoUri(sighting.photoId, 'full');
   const candidates = sighting.candidates ?? [];
   const [selected, setSelected] = useState(candidates.length ? 0 : null);
   const [busy, setBusy] = useState(false);
@@ -90,37 +118,48 @@ export function DraftSheet({ sighting, onClose }) {
     }
   }
 
-  async function remove() {
-    if (!window.confirm('Bu taslak ve fotoğrafı silinsin mi?')) return;
-    await deleteSighting(sighting.id);
-    onClose();
-  }
-
-  if (outcome) {
-    return (
-      <Sheet title="" onClose={onClose}>
-        <Celebration outcome={outcome} onAgain={onClose} againLabel="Kitaba dön" againIcon="book" hideBookLink />
-      </Sheet>
-    );
-  }
-
   return (
-    <Sheet title="Taslağın türünü seç" onClose={onClose}>
-      <Polaroid src={url} size={180} tilt={-1.5} className="identify__photo" />
-      {candidates.length > 0 ? (
-        <>
-          <p className="muted">Kayıt sırasında önerilen türler. Hangisi olduğuna karar verdin mi?</p>
-          <CandidateList candidates={candidates} selectedIndex={selected} onSelect={setSelected} />
-          <button type="button" className="btn btn-primary btn-block" onClick={confirm} disabled={busy || selected === null}>
-            Bu tür, kitaba ekle
-          </button>
-        </>
-      ) : (
-        <p className="muted">Bu fotoğraf için tür önerisi yok. Yeniden çekip taratmayı deneyebilirsin.</p>
-      )}
-      <button type="button" className="btn btn-text danger-link" onClick={remove} disabled={busy}>
-        Taslağı sil
-      </button>
+    <Sheet title={outcome ? '' : 'Taslağın türünü seç'} onClose={onClose}>
+      {({ close }) =>
+        outcome ? (
+          <Celebration outcome={outcome} onAgain={close} againLabel="Kitaba dön" againIcon="book" hideBookLink />
+        ) : (
+          <>
+            <Polaroid uri={uri} width={180} tilt={-1.5} style={{ alignSelf: 'center', marginTop: 8 }} />
+            {candidates.length > 0 ? (
+              <>
+                <Text style={type.muted}>Kayıt sırasında önerilen türler. Hangisi olduğuna karar verdin mi?</Text>
+                <CandidateList candidates={candidates} selectedIndex={selected} onSelect={setSelected} />
+                <Button block title="Bu tür, kitaba ekle" onPress={confirm} disabled={busy || selected === null} />
+              </>
+            ) : (
+              <Text style={type.muted}>Bu fotoğraf için tür önerisi yok. Yeniden çekip taratmayı deneyebilirsin.</Text>
+            )}
+            <Button
+              variant="text"
+              color={colors.earth}
+              title="Taslağı sil"
+              disabled={busy}
+              onPress={async () => {
+                if (!(await confirmAsync('Taslak silinsin mi?', 'Bu taslak ve fotoğrafı silinecek.'))) return;
+                await deleteSighting(sighting.id);
+                close();
+              }}
+            />
+          </>
+        )
+      }
     </Sheet>
   );
 }
+
+const styles = StyleSheet.create({
+  photoFrame: {
+    width: '100%',
+    borderWidth: 8,
+    borderColor: colors.paperWhite,
+    backgroundColor: colors.paperWhite,
+  },
+  photo: { flex: 1 },
+  photoBtn: { backgroundColor: colors.cream, alignSelf: 'center', marginTop: 8 },
+});

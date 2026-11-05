@@ -2,10 +2,16 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "mantar-defteri",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5173
+      "name": "mantar-defteri-web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--web", "--port", "8081"],
+      "port": 8081
+    },
+    {
+      "name": "mantar-defteri-web-deneme",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "set RECOGNIZER_ORDER=none&& npx expo start --web --port 8081"],
+      "port": 8081
     }
   ]
 }

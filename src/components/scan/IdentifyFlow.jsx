@@ -7,26 +7,37 @@
   Hem Tara ekranında hem Bekleyenler ekranında aynı bileşen kullanılır.
 */
 import { useState } from 'react';
-import Polaroid from '../ui/Polaroid.jsx';
-import Icon from '../ui/Icon.jsx';
-import CandidateList from './CandidateList.jsx';
-import FieldNotesForm from './FieldNotesForm.jsx';
-import Celebration from './Celebration.jsx';
-import { usePhotoUrl } from '../../data/hooks.js';
-import { recordSighting } from '../../services/collection.js';
-import { displayName } from '../../services/safety.js';
-import './scan.css';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import Polaroid from '../ui/Polaroid';
+import Appear, { POLAROID_IN } from '../ui/Appear';
+import Paper from '../ui/Paper';
+import Button from '../ui/Button';
+import Icon from '../ui/Icon';
+import CandidateList from './CandidateList';
+import FieldNotesForm from './FieldNotesForm';
+import Celebration from './Celebration';
+import { type } from '../ui/Typography';
+import { usePhotoUri } from '../../data/hooks';
+import { recordSighting } from '../../services/collection';
+import { displayName } from '../../services/safety';
+import { colors, fonts, radius } from '../../theme';
 
-export default function IdentifyFlow({ photoId, result, onSaved, onCancel, onAgain, againLabel }) {
-  const photoUrl = usePhotoUrl(photoId, 'full');
+export default function IdentifyFlow({ photoId, result, onSaved, onCancel, onAgain, againLabel, onStepChange }) {
+  const photoUri = usePhotoUri(photoId, 'full');
   const hasCandidates = result.isMushroom && result.candidates.length > 0;
 
-  const [step, setStep] = useState('choose'); // choose | notes | done
+  const [step, setStepState] = useState('choose'); // choose | notes | done
   const [selected, setSelected] = useState(hasCandidates ? 0 : null);
   const [asDraft, setAsDraft] = useState(!hasCandidates);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [outcome, setOutcome] = useState(null);
+
+  const setStep = (s) => {
+    setStepState(s);
+    onStepChange?.(s); // ekran en üste kaydırılsın diye
+  };
 
   async function save({ foundAt, notes }) {
     setBusy(true);
@@ -52,29 +63,30 @@ export default function IdentifyFlow({ photoId, result, onSaved, onCancel, onAga
   const chosen = !asDraft && selected !== null ? result.candidates[selected] : null;
 
   return (
-    <div className="identify">
-      <Polaroid
-        src={photoUrl}
-        alt="Taranan mantar"
-        caption={step === 'notes' ? (chosen ? displayName(chosen) : 'Taslak') : undefined}
-        className="identify__photo"
-        size={step === 'notes' ? 170 : 240}
-      />
+    <View style={styles.wrap}>
+      <Appear from={POLAROID_IN} style={styles.photo}>
+        <Polaroid
+          uri={photoUri}
+          caption={step === 'notes' ? (chosen ? displayName(chosen) : 'Taslak') : undefined}
+          width={step === 'notes' ? 170 : 240}
+        />
+      </Appear>
 
       {result.mock && (
-        <p className="identify__mock">
-          <Icon name="info" size={16} /> Deneme modu: Bu sonuçlar sahte. Gerçek tanıma için API anahtarını ekle.
-        </p>
+        <View style={styles.mock}>
+          <Icon name="info" size={16} color={colors.earth} style={{ marginTop: 2 }} />
+          <Text style={styles.mockText}>Deneme modu: Bu sonuçlar sahte. Gerçek tanıma için API anahtarını ekle.</Text>
+        </View>
       )}
 
       {step === 'choose' && (
-        <>
+        <Animated.View entering={FadeIn.duration(250)} style={styles.wrap}>
           {hasCandidates ? (
             <>
-              <div>
-                <h2>Bu hangisi olabilir?</h2>
-                <p className="muted">Fotoğraftan tür tespiti kesin değildir. En yakın görüneni seç.</p>
-              </div>
+              <View style={{ gap: 4 }}>
+                <Text style={type.h2}>Bu hangisi olabilir?</Text>
+                <Text style={type.muted}>Fotoğraftan tür tespiti kesin değildir. En yakın görüneni seç.</Text>
+              </View>
               <CandidateList
                 candidates={result.candidates}
                 selectedIndex={asDraft ? null : selected}
@@ -85,54 +97,61 @@ export default function IdentifyFlow({ photoId, result, onSaved, onCancel, onAga
               />
             </>
           ) : (
-            <div className="paper empty-state">
-              <Icon name="mushroom" size={40} />
-              <p>Bu fotoğrafta bir mantar seçemedim.</p>
-              {result.photoTip && <p className="muted">{result.photoTip}</p>}
-            </div>
+            <Paper style={styles.empty}>
+              <Icon name="mushroom" size={40} color={colors.moss} />
+              <Text style={[type.muted, type.center]}>Bu fotoğrafta bir mantar seçemedim.</Text>
+              {!!result.photoTip && <Text style={[type.small, type.center]}>{result.photoTip}</Text>}
+            </Paper>
           )}
 
-          {hasCandidates && result.photoTip && <p className="identify__tip">💡 {result.photoTip}</p>}
+          {hasCandidates && !!result.photoTip && <Text style={type.small}>💡 {result.photoTip}</Text>}
 
-          <div className="identify__actions">
+          <View style={styles.actions}>
             {hasCandidates && (
-              <button
-                type="button"
-                className="btn btn-primary btn-block"
-                disabled={asDraft || selected === null}
-                onClick={() => setStep('notes')}
-              >
-                Bu tür, devam et
-              </button>
+              <Button block title="Bu tür, devam et" disabled={asDraft || selected === null} onPress={() => setStep('notes')} />
             )}
-            <button
-              type="button"
-              className="btn btn-ghost btn-block"
-              onClick={() => {
+            <Button
+              block
+              variant="ghost"
+              title="Emin değilim, taslak kaydet"
+              onPress={() => {
                 setAsDraft(true);
                 setStep('notes');
               }}
-            >
-              Emin değilim, taslak kaydet
-            </button>
-            <button type="button" className="btn btn-text" onClick={onCancel}>
-              Vazgeç
-            </button>
-          </div>
-        </>
+            />
+            <Button variant="text" title="Vazgeç" onPress={onCancel} />
+          </View>
+        </Animated.View>
       )}
 
       {step === 'notes' && (
-        <>
+        <Animated.View entering={FadeIn.duration(250)} style={{ gap: 10 }}>
           <FieldNotesForm
             onSubmit={save}
             onBack={() => setStep('choose')}
             busy={busy}
             submitLabel={asDraft ? 'Taslak olarak kaydet' : 'Deftere kaydet'}
           />
-          {error && <p className="field__error">{error}</p>}
-        </>
+          {!!error && <Text style={styles.error}>{error}</Text>}
+        </Animated.View>
       )}
-    </div>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrap: { gap: 18 },
+  photo: { alignSelf: 'center', marginTop: 8 },
+  mock: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: radius.sm,
+    backgroundColor: colors.mustardSoft,
+  },
+  mockText: { flex: 1, fontFamily: fonts.sansBold, fontSize: 13.5, lineHeight: 19, color: colors.earth },
+  empty: { alignItems: 'center', gap: 10, paddingVertical: 26 },
+  actions: { gap: 10 },
+  error: { fontFamily: fonts.sans, fontSize: 13, color: colors.earth, textAlign: 'center' },
+});

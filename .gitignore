@@ -1,5 +1,27 @@
 node_modules
 dist
+web-build
+*.log
+
+# Gizli anahtarlar
 .env
 .env.local
-*.log
+.env*.local
+
+# Expo
+.expo/
+expo-env.d.ts
+.metro-health-check*
+
+# Expo'nun kendiliğinden ürettiği telefon klasörleri (elle düzenlenmez)
+/ios
+/android
+
+# Derleme ve imza dosyaları
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+.DS_Store

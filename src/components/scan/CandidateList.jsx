@@ -2,40 +2,71 @@
   ADAY LİSTESİ — Tanımanın önerdiği en olası 3 tür, güven yüzdesiyle.
   Kullanıcı birine dokunarak seçer.
 */
-import { RARITY } from '../../data/gamification.js';
-import { displayName } from '../../services/safety.js';
+import { StyleSheet, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import Paper from '../ui/Paper';
+import Chip from '../ui/Chip';
+import ProgressBar from '../ui/ProgressBar';
+import { RARITY } from '../../data/gamification';
+import { displayName } from '../../services/safety';
+import { colors, fonts, shadows } from '../../theme';
 
 export default function CandidateList({ candidates, selectedIndex, onSelect }) {
   return (
-    <ul className="candidates" role="radiogroup" aria-label="Olası türler">
+    <View style={styles.list} accessibilityRole="radiogroup" accessibilityLabel="Olası türler">
       {candidates.map((c, i) => {
         const selected = i === selectedIndex;
         return (
-          <li key={c.latinName}>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              className={`paper candidate${selected ? ' is-selected' : ''}`}
-              onClick={() => onSelect(i)}
-            >
-              <span className="candidate__radio" aria-hidden="true" />
-              <span className="candidate__body">
-                <span className="candidate__name">{displayName(c)}</span>
-                {c.turkishName && <span className="candidate__latin">{c.latinName}</span>}
-                {c.habitat && <span className="candidate__hint">{c.habitat}</span>}
-                <span className="candidate__meta">
-                  <span className="candidate__bar" aria-hidden="true">
-                    <span style={{ width: `${c.confidence}%` }} />
-                  </span>
-                  <span className="candidate__pct">%{c.confidence}</span>
-                  <span className="chip chip--small">{RARITY[c.rarity]?.label}</span>
-                </span>
-              </span>
-            </button>
-          </li>
+          <Paper
+            key={c.latinName}
+            padded={false}
+            onPress={() => {
+              Haptics.selectionAsync().catch(() => {});
+              onSelect(i);
+            }}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: selected }}
+            accessibilityLabel={`${displayName(c)}, yüzde ${c.confidence}`}
+            style={[styles.card, selected && styles.selected]}
+          >
+            <View style={[styles.radio, selected && styles.radioOn]}>{selected && <View style={styles.radioDot} />}</View>
+            <View style={styles.body}>
+              <Text style={styles.name}>{displayName(c)}</Text>
+              {!!c.turkishName && <Text style={styles.latin}>{c.latinName}</Text>}
+              {!!c.habitat && <Text style={styles.hint}>{c.habitat}</Text>}
+              <View style={styles.meta}>
+                <ProgressBar value={c.confidence / 100} height={6} color={colors.moss} style={{ flex: 1 }} />
+                <Text style={styles.pct}>%{c.confidence}</Text>
+                <Chip small label={RARITY[c.rarity]?.label} />
+              </View>
+            </View>
+          </Paper>
         );
       })}
-    </ul>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  list: { gap: 10 },
+  card: { flexDirection: 'row', gap: 14, alignItems: 'flex-start', paddingVertical: 14, paddingHorizontal: 16 },
+  selected: { borderColor: colors.forest, borderWidth: 2, margin: -0.5, ...shadows.paper },
+  radio: {
+    width: 20,
+    height: 20,
+    marginTop: 4,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: colors.inkFaint,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioOn: { borderColor: colors.forest },
+  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.forest },
+  body: { flex: 1, gap: 2 },
+  name: { fontFamily: fonts.serif, fontSize: 21, lineHeight: 25, color: colors.forest },
+  latin: { fontFamily: fonts.serifItalic, fontSize: 16, color: colors.inkSoft },
+  hint: { fontFamily: fonts.sans, fontSize: 13.5, lineHeight: 19, color: colors.inkSoft, marginTop: 4 },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
+  pct: { fontFamily: fonts.sansHeavy, fontSize: 13.5, color: colors.forest, minWidth: 36 },
+});

@@ -8,34 +8,42 @@ Yol haritası ve teknik kararlar için: [PLAN.md](PLAN.md)
 
 ---
 
-## Bilgisayarda çalıştırma
+## Telefonda çalıştırma (Expo Go)
 
-**Bir kez yapılır:** [Node.js](https://nodejs.org) kurulu olmalı (20 veya üstü).
-Kurulu mu diye bakmak için terminale `node --version` yaz.
+Mantar Defteri artık bir **React Native (Expo)** telefon uygulaması. Geliştirirken uygulama
+bilgisayarında çalışır, telefonundaki **Expo Go** uygulaması onu kablosuz olarak açar.
 
-1. Bu klasörde bir terminal aç (VS Code'da: üst menü → Terminal → New Terminal).
-2. Gerekli paketleri indir (sadece ilk seferde ve paket listesi değişince):
+**Bir kez yapılır:**
+1. Bilgisayarda [Node.js](https://nodejs.org) **22.13 veya üstü** kurulu olmalı
+   (terminalde `node --version` ile bakabilirsin).
+2. Telefonuna mağazadan **Expo Go** uygulamasını kur (Android: Play Store, iPhone: App Store).
+3. Bu klasörde bir terminal açıp paketleri indir (paket listesi değişince de tekrarlanır):
    ```
    npm install
    ```
-3. Uygulamayı başlat:
+
+**Her seferinde:**
+1. Telefon ve bilgisayar **aynı Wi-Fi**'de olmalı.
+2. Terminalde uygulamayı başlat:
    ```
-   npm run dev
+   npm start
    ```
-4. Terminalde görünen `http://localhost:5173` adresini tarayıcıda aç.
+   (Windows güvenlik duvarı izin isterse "İzin ver" de.)
+3. Terminalde bir **QR kodu** belirir.
+   - **Android:** Expo Go'yu aç → "Scan QR code" ile kodu okut.
+   - **iPhone:** Telefonun kendi kamerasıyla kodu okut → çıkan bağlantıya dokun.
+4. Kodu kaydettiğinde telefondaki uygulama kendiliğinden yenilenir.
 5. Durdurmak için terminalde `Ctrl + C`.
 
-### Telefon görünümünde denemek
-Chrome'da sayfadayken `F12` → sol üstteki telefon simgesi (Toggle device toolbar) →
-üstten bir telefon modeli seç.
+> Aynı Wi-Fi'de bağlanamazsan (ör. okul/iş ağı): `npx expo start --tunnel` dene.
 
-### Gerçek telefonda denemek
-Telefon ve bilgisayar **aynı Wi-Fi**'de olmalı. `npm run dev` çalışırken terminalde
-`Network: http://192.168.x.x:5173` gibi bir satır görürsün; bu adresi telefonun
-tarayıcısına yaz. (Windows güvenlik duvarı sorarsa "İzin ver" de.)
+### Bilgisayarda (tarayıcıda) hızlıca bakmak
+`npm run web` → `http://localhost:8081`. Bu sadece geliştirme kolaylığı içindir; kamera
+yerine dosya seçici açılır ve bazı telefon özellikleri (titreşim, telefonun tarih seçicisi) yoktur.
 
-> Not: "Ana ekrana ekle" ve çevrimdışı çalışma 6. aşamada eklenecek; o özellikler
-> güvenli bağlantı (https) ister, onun için ayrıca yol göstereceğim.
+### Web sürümüne geri dönmek istersen
+React Native'e geçmeden önceki web sürümü git'te ayrı bir dalda, `web-son` dalında duruyor.
+O sürüme bakmak için `git checkout web-son`, geri dönmek için `git checkout main`.
 
 ---
 
@@ -53,7 +61,7 @@ sonuç verir.
    ```
    EVREN_API_KEY=evren_llm_buraya-anahtarın
    ```
-4. Terminalde `npm run dev` komutunu durdurup (`Ctrl + C`) yeniden başlat.
+4. Terminalde `npm start` komutunu durdurup (`Ctrl + C`) yeniden başlat.
    Terminalde `🍄 Tür tanıma: Evren · gemma-4-31b` yazısını görmelisin.
 
 ### Model değiştirmek
@@ -81,8 +89,9 @@ Kod hazır duruyor; şimdilik gerek yok.
 
 ### Anahtar neden güvende?
 - `.env` dosyası **GitHub'a gönderilmez** (`.gitignore` içinde).
-- Anahtar sadece sunucu kodunda (`server/`) okunur. Telefona giden uygulama
-  kodunda yer almaz; telefon fotoğrafı `/api/identify` adresine yollar, anahtarı sunucu ekler.
+- Anahtar sadece bilgisayarda çalışan sunucu kodunda (`server/` ve `src/app/api/`) okunur.
+  Telefona giden uygulama kodunda yer almaz; telefon fotoğrafı `/api/identify` adresine
+  yollar, anahtarı sunucu ekler.
 - Yayına alırken (6. aşama) anahtar Cloudflare panelinde "Environment variables" bölümüne girilir.
 
 ### Maliyet
@@ -96,11 +105,12 @@ fiyatlandırma "kredi" (CR) üzerinden olacak; o tarih yaklaşınca Evren paneli
 
 | Klasör | Ne var? |
 |---|---|
-| `src/screens/` | Ekranlar: Ana Sayfa, Kitap, Tara, Geziler, Profil |
-| `src/components/` | Tekrar kullanılan parçalar (menü, kapak, süslemeler, ikonlar) |
-| `src/styles/theme.css` | **Tüm renkler ve yazı tipleri** — görünümü buradan değiştirebilirsin |
-| `src/data/` | Cihazdaki veritabanı ve oyun kuralları (puan, seviye, rozet) |
-| `src/services/` | Fotoğraf küçültme, tür tanıma, **güvenlik süzgeci**, bekleyenler kuyruğu |
-| `server/` | Sadece sunucuda çalışan tanıma kodu (API anahtarı burada kullanılır) |
-| `functions/` | Yayındaki sunucu (Cloudflare Pages) için giriş dosyası |
-| `public/` | Simge gibi sabit dosyalar |
+| `src/app/` | Ekranlar (dosya adı = ekran): Ana Sayfa, Kitap, Tara, Geziler, Profil, Bekleyenler |
+| `src/app/api/identify+api.js` | Tür tanıma adresi (bilgisayarda çalışır, API anahtarını kullanır) |
+| `src/components/` | Tekrar kullanılan parçalar (menü, kitap, kapak, süslemeler, ikonlar, formlar) |
+| `src/theme.js` | **Tüm renkler, yazı tipleri ve ölçüler** — görünümü buradan değiştirebilirsin |
+| `src/data/` | Telefondaki veritabanı (SQLite) ve oyun kuralları (puan, seviye, rozet) |
+| `src/services/` | Fotoğraf kaydetme, tür tanıma, **güvenlik süzgeci**, bekleyenler kuyruğu |
+| `server/` | Tanıma servislerine bağlanan kod (Evren → Gemini → Claude) |
+| `functions/` | Yayındaki sunucu için giriş dosyası (6. aşamada) |
+| `assets/` | Kâğıt dokusu gibi görseller |

@@ -1,7 +1,12 @@
 /*
-  TANIYICI ADAPTÖRÜ — Uygulamanın geri kalanı tür tanımayı sadece bu dosya
-  üzerinden yapar. İleride servisi değiştirmek istersek (ör. Kindwise mushroom.id)
-  sadece sunucudaki kodu değiştirmemiz yeterli; bu dosyanın döndürdüğü biçim aynı kalır.
+  TANIYICI ADAPTÖRÜ — Uygulamanın geri kalanı tür tanımayı sadece bu dosya üzerinden yapar.
+  Servisi değiştirmek istersek (ör. Kindwise mushroom.id) sadece sunucudaki kodu
+  değiştirmemiz yeterli; bu dosyanın döndürdüğü biçim aynı kalır.
+
+  Adres: /api/identify
+  - Geliştirirken telefon bu isteği otomatik olarak bilgisayardaki Expo sunucusuna yollar
+    (src/app/api/identify+api.js). API anahtarı orada, bilgisayarda kalır.
+  - Yayında (6. aşama) app.json'daki "origin" adresine gider.
 
   Döndürülen sonuç:
   {
@@ -12,8 +17,9 @@
                     capShape, color, stem, habitat, season, funFact } ]
   }
 */
-import { blobToBase64 } from './imageTools.js';
+import NetInfo from '@react-native-community/netinfo';
 import { sanitizeResult } from './safety.js';
+import { photoBase64 } from './photos';
 
 /** İnternet yok ya da sunucuya ulaşılamadı → fotoğraf bekleyenlere düşmeli */
 export class OfflineError extends Error {
@@ -35,12 +41,21 @@ export class RecognitionError extends Error {
 const ENDPOINT = '/api/identify';
 const TIMEOUT_MS = 90_000;
 
-export async function identify(photoBlob) {
-  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-    throw new OfflineError();
+/** Telefon internete bağlı mı? (bilinmiyorsa "evet" sayılır, istek kendisi karar verir) */
+export async function isOnline() {
+  try {
+    const state = await NetInfo.fetch();
+    return state.isConnected !== false && state.isInternetReachable !== false;
+  } catch {
+    return true;
   }
+}
 
-  const image = await blobToBase64(photoBlob);
+/** @param {object} photo  photos tablosundaki kayıt */
+export async function identify(photo) {
+  if (!(await isOnline())) throw new OfflineError();
+
+  const image = await photoBase64(photo);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
@@ -49,11 +64,11 @@ export async function identify(photoBlob) {
     response = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image, mediaType: photoBlob.type || 'image/jpeg' }),
+      body: JSON.stringify({ image, mediaType: 'image/jpeg' }),
       signal: controller.signal,
     });
   } catch (err) {
-    if (err.name === 'AbortError') {
+    if (err?.name === 'AbortError') {
       throw new RecognitionError('Tanıma çok uzun sürdü. Lütfen tekrar dene.', 'timeout');
     }
     throw new OfflineError(); // ağ hatası

@@ -1,15 +1,54 @@
 /*
   POLAROİD — Fotoğrafı sayfaya bantla yapıştırılmış gibi gösterir.
+  Üstte yarı saydam bir bant parçası, altta el yazısı tadında tarih.
   tilt: hafif eğim (derece). Her fotoğraf biraz farklı dursun diye.
 */
-export default function Polaroid({ src, alt = '', caption, tilt = -1.5, className = '', size }) {
+import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import { colors, fonts, shadows } from '../../theme';
+
+export default function Polaroid({ uri, caption, tilt = -1.5, width = 240, tape = true, style }) {
+  const small = width < 130;
+  const pad = small ? 6 : 12;
   return (
-    <figure
-      className={`polaroid ${className}`}
-      style={{ '--tilt': `${tilt}deg`, ...(size ? { width: size } : {}) }}
+    <View
+      style={[
+        styles.frame,
+        { width, padding: pad, paddingBottom: caption ? pad + 2 : pad, transform: [{ rotate: `${tilt}deg` }] },
+        style,
+      ]}
     >
-      {src ? <img src={src} alt={alt} /> : <div className="polaroid__blank" aria-hidden="true" />}
-      {caption && <figcaption>{caption}</figcaption>}
-    </figure>
+      <View style={styles.photoBox}>
+        {uri ? <Image source={{ uri }} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} /> : null}
+      </View>
+      {!!caption && <Text style={styles.caption}>{caption}</Text>}
+      {tape && (
+        <View
+          style={[
+            styles.tape,
+            small ? { width: 40, height: 14, top: -7, marginLeft: -20 } : { width: 86, height: 24, top: -11, marginLeft: -43 },
+          ]}
+        />
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  frame: { backgroundColor: colors.paperWhite, ...shadows.paper },
+  photoBox: { width: '100%', aspectRatio: 1, backgroundColor: colors.paperEdge, overflow: 'hidden' },
+  caption: {
+    marginTop: 10,
+    textAlign: 'center',
+    fontFamily: fonts.serifItalic,
+    fontSize: 17,
+    color: colors.inkSoft,
+  },
+  // yapışkan bant
+  tape: {
+    position: 'absolute',
+    left: '50%',
+    backgroundColor: 'rgba(240, 223, 180, 0.78)',
+    transform: [{ rotate: '-3deg' }],
+  },
+});
